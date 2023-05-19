@@ -115,7 +115,7 @@ if __name__ == '__main__':
     parser.add_argument('output', help='output image')
     parser.add_argument('-x', dest='width', type=int, help='the width of the wallpaper')
     parser.add_argument('-y', dest='height', type=int, help='the height of the wallpaper')
-    parser.add_argument('-j', dest='output_json', type=str, help='output json fole')
+    parser.add_argument('-j', dest='output_json', type=str, help='output json file')
     
     args = parser.parse_args()
 
