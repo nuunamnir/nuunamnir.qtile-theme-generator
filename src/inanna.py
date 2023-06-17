@@ -15,7 +15,7 @@ import scipy.optimize
 
 
 class Theme:
-    def __init__(self, input_path, width=3840, height=2160, wallpaper_mode='stretched', name=None):
+    def __init__(self, input_path, width=3840, height=2160, wallpaper_mode='stretched', name=None, light=False):
         self.image = PIL.Image.open(input_path).convert('RGB')
 
         if name is None:
@@ -27,6 +27,7 @@ class Theme:
         self.theme_data['name'] = self.name
         self.theme_data['colors'] = dict()
         self.theme_data['fonts'] = dict()
+        self.light = light
 
         self.theme_data['wallpaper'] = wallpaper_mode
 
@@ -56,8 +57,14 @@ class Theme:
                 threshold = numpy.median(partition, axis=0)[channel]
                 sub_partition_left = partition[partition[:, channel] <= threshold]
                 sub_partition_right = partition[partition[:, channel] > threshold]
-                tmp_partitions += [sub_partition_left, sub_partition_right]
-            partitions = tmp_partitions
+                if len(sub_partition_left) > 0:
+                    tmp_partitions.append(sub_partition_left)
+                if len(sub_partition_right) > 0:
+                    tmp_partitions.append(sub_partition_right)
+            if len(tmp_partitions) > 0:
+                partitions = tmp_partitions
+            else:
+                break
 
         self.colors = list()
         for partition in partitions:
@@ -80,6 +87,8 @@ class Theme:
         luminance = lambda x: colorsys.rgb_to_hls(*x)[1]
         colors_by_luminance = sorted(self.colors, key=lambda x: luminance(x))
 
+
+
         # adapted_luminance = lambda x, target_luminance :numpy.abs(target_luminance - (x[0] * 0.2126 + x[1] * 0.7152 + x[2] * 0.0722))
         adapted_luminance = lambda x, target_luminance :numpy.abs(target_luminance - colorsys.rgb_to_hls(*x)[1])
 
@@ -93,7 +102,7 @@ class Theme:
             if luminance_background > 0.5:
                 logging.warning('𝍄 | background is too bright')
                 colors_by_luminance[0] = scipy.optimize.minimize(adapted_luminance, x0=colors_by_luminance[0], bounds=((0, 1), (0, 1), (0, 1)), args=(0.5), method=method).x
-                colors_by_luminance[-1] = [1, 1, 1]
+                colors_by_luminance[-1] = numpy.array([1, 1, 1])
             else:
                 logging.warning('𝍄 | adjusting foreground')
                 colors_by_luminance[-1] = scipy.optimize.minimize(adapted_luminance, x0=colors_by_luminance[-1], bounds=((0,1), (0, 1), (0, 1)), args=(luminance_background + 0.5), method=method).x
@@ -123,24 +132,44 @@ class Theme:
         else:
             background_accent = accent_color
 
-        h, s, v = colorsys.rgb_to_hsv(*foreground_accent)
+
         adjacency = 0.05
-        h_alt1 = h + adjacency if h <= 1 - adjacency else 1 - (h + adjacency)
-        h_alt2 = h - adjacency if h >= adjacency else 1 + (h - adjacency)
-        alt1 = numpy.array(colorsys.hsv_to_rgb(h_alt1, s, v))
-        alt2 = numpy.array(colorsys.hsv_to_rgb(h_alt2, s, v))
+        if not self.light:
+            h, s, v = colorsys.rgb_to_hsv(*foreground_accent)
+            h_alt1 = h + adjacency if h <= 1 - adjacency else 1 - (h + adjacency)
+            h_alt2 = h - adjacency if h >= adjacency else 1 + (h - adjacency)
+            alt1 = numpy.array(colorsys.hsv_to_rgb(h_alt1, s, v))
+            alt2 = numpy.array(colorsys.hsv_to_rgb(h_alt2, s, v))
+
+            h_complimentary = h - 0.5 if h >= 0.5 else 1 + (h - 0.5)
+            complimentary = numpy.array(colorsys.hsv_to_rgb(h_complimentary, s, v))
 
 
-        h_complimentary = h - 0.5 if h >= 0.5 else 1 + (h - 0.5)
-        complimentary = numpy.array(colorsys.hsv_to_rgb(h_complimentary, s, v))
+            self.theme_data['colors']['foreground'] = '#%02x%02x%02x' % tuple(numpy.floor(colors_by_luminance[-1] * 255).astype(int))
+            self.theme_data['colors']['foreground-accent'] = '#%02x%02x%02x' % tuple(numpy.floor(foreground_accent * 255).astype(int))
+            self.theme_data['colors']['foreground-accent-alt1'] = '#%02x%02x%02x' % tuple(numpy.floor(alt1 * 255).astype(int))
+            self.theme_data['colors']['foreground-accent-alt2'] = '#%02x%02x%02x' % tuple(numpy.floor(alt2 * 255).astype(int))
+            self.theme_data['colors']['foreground-accent-complimentary'] = '#%02x%02x%02x' % tuple(numpy.floor(complimentary * 255).astype(int))
+            self.theme_data['colors']['background-accent'] = '#%02x%02x%02x' % tuple(numpy.floor(background_accent * 255).astype(int))
+            self.theme_data['colors']['background'] = '#%02x%02x%02x' % tuple(numpy.floor(colors_by_luminance[0] * 255).astype(int))
+        else:
+            h, s, v = colorsys.rgb_to_hsv(*background_accent)
+            h_alt1 = h + adjacency if h <= 1 - adjacency else 1 - (h + adjacency)
+            h_alt2 = h - adjacency if h >= adjacency else 1 + (h - adjacency)
+            alt1 = numpy.array(colorsys.hsv_to_rgb(h_alt1, s, v))
+            alt2 = numpy.array(colorsys.hsv_to_rgb(h_alt2, s, v))
 
-        self.theme_data['colors']['foreground'] = '#%02x%02x%02x' % tuple(numpy.floor(colors_by_luminance[-1] * 255).astype(int))
-        self.theme_data['colors']['foreground-accent'] = '#%02x%02x%02x' % tuple(numpy.floor(foreground_accent * 255).astype(int))
-        self.theme_data['colors']['foreground-accent-alt1'] = '#%02x%02x%02x' % tuple(numpy.floor(alt1 * 255).astype(int))
-        self.theme_data['colors']['foreground-accent-alt2'] = '#%02x%02x%02x' % tuple(numpy.floor(alt2 * 255).astype(int))
-        self.theme_data['colors']['foreground-accent-complimentary'] = '#%02x%02x%02x' % tuple(numpy.floor(complimentary * 255).astype(int))
-        self.theme_data['colors']['background-accent'] = '#%02x%02x%02x' % tuple(numpy.floor(background_accent * 255).astype(int))
-        self.theme_data['colors']['background'] = '#%02x%02x%02x' % tuple(numpy.floor(colors_by_luminance[0] * 255).astype(int))
+            h_complimentary = h - 0.5 if h >= 0.5 else 1 + (h - 0.5)
+            complimentary = numpy.array(colorsys.hsv_to_rgb(h_complimentary, s, v))
+
+            self.theme_data['colors']['foreground'] = '#%02x%02x%02x' % tuple(numpy.floor(colors_by_luminance[0] * 255).astype(int))
+            self.theme_data['colors']['foreground-accent'] = '#%02x%02x%02x' % tuple(numpy.floor(background_accent * 255).astype(int))
+            self.theme_data['colors']['foreground-accent-alt1'] = '#%02x%02x%02x' % tuple(numpy.floor(alt1 * 255).astype(int))
+            self.theme_data['colors']['foreground-accent-alt2'] = '#%02x%02x%02x' % tuple(numpy.floor(alt2 * 255).astype(int))
+            self.theme_data['colors']['foreground-accent-complimentary'] = '#%02x%02x%02x' % tuple(numpy.floor(complimentary * 255).astype(int))
+            self.theme_data['colors']['background-accent'] = '#%02x%02x%02x' % tuple(numpy.floor(foreground_accent * 255).astype(int))
+            self.theme_data['colors']['background'] = '#%02x%02x%02x' % tuple(numpy.floor(colors_by_luminance[-1] * 255).astype(int))
+
 
 
     def preview(self, size=64, padding=4):
@@ -180,11 +209,12 @@ if __name__ == '__main__':
     parser.add_argument('-w', '--wallpaper', dest='wallpaper', type=str, help='mode in which the image is used as wallpaper in this theme', choices=['stretched', 'centered', 'tiled'], required=False, default='stretched')
     parser.add_argument('-o', '--output', dest='output', type=str, help='output directory path', required=False, default='')
     parser.add_argument('-p', '--preview', dest='preview', type=bool, help='shows a preview of the theme colors', required=False, default=False)
+    parser.add_argument('-l', '--light', dest='light', type=bool, help='flips colors to create a light theme', required=False, default=False)
     parser.add_argument(dest='input', type=str, help='an input image based on which the theme is generated')
 
     args = parser.parse_args()
 
-    theme = Theme(args.input, name=args.name, width=args.width, height=args.height, wallpaper_mode=args.wallpaper)
+    theme = Theme(args.input, name=args.name, width=args.width, height=args.height, wallpaper_mode=args.wallpaper, light=args.light)
     if args.preview:
         theme.preview()
     theme.save(output_dir_path=args.output)
