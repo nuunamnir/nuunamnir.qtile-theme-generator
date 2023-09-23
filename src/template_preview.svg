@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1920"
+   height="1080"
+   viewBox="0 0 508 285.75"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="template_preview.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.6098958"
+     inkscape:cx="960.31058"
+     inkscape:cy="540.09706"
+     inkscape:window-width="1878"
+     inkscape:window-height="1970"
+     inkscape:window-x="1940"
+     inkscape:window-y="94"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#000000;stroke-width:0.264583"
+       id="background"
+       width="523.875"
+       height="285.75"
+       x="0"
+       y="-1.7763568e-15"
+       inkscape:label="#background" />
+    <text
+       xml:space="preserve"
+       style="font-size:50.8px;fill:#000000;stroke-width:0.264583"
+       x="3.3866668"
+       y="47.735065"
+       id="title"
+       inkscape:label="#title"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.8px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#ffffff;stroke-width:0.264583"
+         x="3.3866668"
+         y="47.735065">nuunamnir</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:25.4px;fill:#000000;stroke-width:0.264583"
+       x="6.4600668"
+       y="87.367531"
+       id="theme"
+       inkscape:label="#theme"><tspan
+         sodipodi:role="line"
+         id="tspan1-7"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.4px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#ffffff;stroke-width:0.264583"
+         x="6.4600668"
+         y="87.367531">template preview</tspan></text>
+    <rect
+       style="fill:#333333;stroke-width:0.670655"
+       id="background_dark"
+       width="135.46666"
+       height="135.46666"
+       x="4.2333331"
+       y="131.23334"
+       inkscape:label="#background_dark" />
+    <rect
+       style="fill:#333333;stroke-width:0.670655"
+       id="background_light"
+       width="135.46666"
+       height="135.46666"
+       x="249.76666"
+       y="131.23334"
+       inkscape:label="#background_light" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_red"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="190.59062" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_green"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="201.17395" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_blue"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="211.75729" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_yellow"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="222.34062" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_purple"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="232.92395" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_cyan"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="243.50729" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_red"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="190.59062" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_green"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="201.17395" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_blue"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="211.75729" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_yellow"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="222.34062" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_purple"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="232.92395" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_cyan"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="243.50729" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_white"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="254.09062" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_white"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="254.09062" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_black"
+       width="67.73333"
+       height="8.4666662"
+       x="262.38193"
+       y="180.00729"
+       inkscape:label="#dark_black" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="light_bright_black"
+       width="67.73333"
+       height="8.4666662"
+       x="340.69861"
+       y="180.00729"
+       inkscape:label="#dark_bright_black" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="364.8212"
+       y="186.5806"
+       id="light_black_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-07"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="364.8212"
+         y="186.5806">black</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="368.83438"
+       y="197.1671"
+       id="light_red_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-0-8"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="368.83438"
+         y="197.1671">red</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="365.14502"
+       y="206.58203"
+       id="light_green_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-9-0"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="365.14502"
+         y="206.58203">green</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="366.87225"
+       y="218.33377"
+       id="light_blue_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-3-8"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="366.87225"
+         y="218.33377">blue</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="362.99557"
+       y="228.24718"
+       id="light_yellow_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-2-4"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="362.99557"
+         y="228.24718">yellow</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="363.06223"
+       y="238.83051"
+       id="light_purple_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-94-9"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="363.06223"
+         y="238.83051">purple</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="366.97067"
+       y="248.77568"
+       id="light_cyan_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-1"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="366.97067"
+         y="248.77568">cyan</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="365.2276"
+       y="260.74329"
+       id="light_white_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-1-4"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="365.2276"
+         y="260.74329">white</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="273.16953"
+       y="186.0218"
+       id="light_bright_black_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-2"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="273.16953"
+         y="186.0218">bright-black</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="277.19858"
+       y="196.60513"
+       id="light_bright_red_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-05-0"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="277.19858"
+         y="196.60513">bright-red</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="276.30017"
+       y="207.46866"
+       id="light_bright_green_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-06-5"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="276.30017"
+         y="207.46866">bright-green</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="275.22055"
+       y="217.7718"
+       id="light_bright_blue_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-62-9"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="275.22055"
+         y="217.7718">bright-blue</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="271.22324"
+       y="228.35513"
+       id="light_bright_yellow_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-062-2"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="271.22324"
+         y="228.35513">bright-yellow</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="271.41055"
+       y="238.93846"
+       id="light_bright_purple_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-31-3"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="271.41055"
+         y="238.93846">bright-purple</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="275.29041"
+       y="249.5218"
+       id="light_bright_cyan_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-39-0"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="275.29041"
+         y="249.5218">bright-cyan</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="273.31555"
+       y="260.1051"
+       id="light_bright_white_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-38-0"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="273.31555"
+         y="260.1051">bright-white</tspan></text>
+    <circle
+       style="fill:#0000ff;stroke-width:0.132766"
+       id="light_blue_circle"
+       cx="336.99445"
+       cy="149.31561"
+       r="8.4666662" />
+    <circle
+       style="fill:#00ff00;stroke-width:0.132766"
+       id="light_green_circle"
+       cx="341.75693"
+       cy="144.02396"
+       r="8.4666662" />
+    <circle
+       style="fill:#ff0000;stroke-width:0.132766"
+       id="light_red_circle"
+       cx="333.29028"
+       cy="144.02396"
+       r="8.4666662" />
+    <ellipse
+       style="fill:#00ffff;stroke-width:0.1327"
+       id="light_cyan_circle"
+       cx="368.73227"
+       cy="149.31561"
+       rx="8.4581995"
+       ry="8.4666662" />
+    <ellipse
+       style="fill:#ff00ff;stroke-width:0.1327"
+       id="light_purple_circle"
+       cx="373.48999"
+       cy="144.02396"
+       rx="8.4581995"
+       ry="8.4666662" />
+    <ellipse
+       style="fill:#ffff00;stroke-width:0.1327"
+       id="light_yellow_circle"
+       cx="365.0318"
+       cy="144.02396"
+       rx="8.4581995"
+       ry="8.4666662" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#ffffff;stroke-width:0.264583"
+       x="6.7394667"
+       y="154.49127"
+       id="dark"
+       inkscape:label="#dark"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-size:22.5778px;stroke-width:0.264583"
+         x="6.7394667"
+         y="154.49127">dark</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#ffffff;stroke-width:0.264583"
+       x="252.476"
+       y="155.10086"
+       id="light"
+       inkscape:label="#light"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="font-size:22.5778px;stroke-width:0.264583"
+         x="252.476"
+         y="155.10086">light</tspan></text>
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_red"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="190.5" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_green"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="201.08333" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_blue"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="211.66667" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_yellow"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="222.25" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_purple"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="232.83333" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_cyan"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="243.41667" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_red"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="190.5" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_green"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="201.08333" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_blue"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="211.66667" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_yellow"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="222.25" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_purple"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="232.83333" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_cyan"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="243.41667" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_white"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="254" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_white"
+       width="67.73333"
+       height="8.4666662"
+       x="95.250008"
+       y="254" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_black"
+       width="67.73333"
+       height="8.4666662"
+       x="16.933332"
+       y="179.91667"
+       inkscape:label="#dark_black" />
+    <rect
+       style="fill:#666666;stroke-width:0.137439"
+       id="dark_bright_black"
+       width="67.73333"
+       height="8.4666662"
+       x="95.25"
+       y="179.91667"
+       inkscape:label="#dark_bright_black" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="119.37258"
+       y="186.48997"
+       id="dark_black_text"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="119.37258"
+         y="186.48997">black</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="123.38579"
+       y="197.07648"
+       id="dark_red_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-0"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="123.38579"
+         y="197.07648">red</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="119.69643"
+       y="206.49141"
+       id="dark_green_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-9"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="119.69643"
+         y="206.49141">green</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="121.42364"
+       y="218.24315"
+       id="dark_blue_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-3"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="121.42364"
+         y="218.24315">blue</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="117.54696"
+       y="228.15656"
+       id="dark_yellow_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-2"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="117.54696"
+         y="228.15656">yellow</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="117.61363"
+       y="238.73988"
+       id="dark_purple_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-94"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="117.61363"
+         y="238.73988">purple</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="121.52206"
+       y="248.68506"
+       id="dark_cyan_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-4"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="121.52206"
+         y="248.68506">cyan</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="119.77899"
+       y="260.65268"
+       id="dark_white_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-1"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="119.77899"
+         y="260.65268">white</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="27.720909"
+       y="185.93118"
+       id="dark_bright_black_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-6"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="27.720909"
+         y="185.93118">bright-black</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="31.749987"
+       y="196.51451"
+       id="dark_bright_red_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-05"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="31.749987"
+         y="196.51451">bright-red</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="30.851561"
+       y="207.37804"
+       id="dark_bright_green_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-06"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="30.851561"
+         y="207.37804">bright-green</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="29.771961"
+       y="217.68118"
+       id="dark_bright_blue_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-62"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="29.771961"
+         y="217.68118">bright-blue</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="25.774633"
+       y="228.26451"
+       id="dark_bright_yellow_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-062"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="25.774633"
+         y="228.26451">bright-yellow</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="25.961958"
+       y="238.84784"
+       id="dark_bright_purple_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-31"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="25.961958"
+         y="238.84784">bright-purple</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="29.841812"
+       y="249.43118"
+       id="dark_bright_cyan_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-39"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="29.841812"
+         y="249.43118">bright-cyan</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'FiraMono Nerd Font Mono';-inkscape-font-specification:'FiraMono Nerd Font Mono';fill:#999999;stroke-width:0.264583"
+       x="27.866959"
+       y="260.0145"
+       id="dark_bright_white_text"><tspan
+         sodipodi:role="line"
+         id="tspan4-38"
+         style="font-size:6.35px;fill:#999999;stroke-width:0.264583"
+         x="27.866959"
+         y="260.0145">bright-white</tspan></text>
+    <circle
+       style="fill:#0000ff;stroke-width:0.132766"
+       id="dark_blue_circle"
+       cx="91.54583"
+       cy="149.22499"
+       r="8.4666662" />
+    <circle
+       style="fill:#00ff00;stroke-width:0.132766"
+       id="dark_green_circle"
+       cx="96.308327"
+       cy="143.93333"
+       r="8.4666662" />
+    <circle
+       style="fill:#ff0000;stroke-width:0.132766"
+       id="dark_red_circle"
+       cx="87.841667"
+       cy="143.93333"
+       r="8.4666662" />
+    <ellipse
+       style="fill:#00ffff;stroke-width:0.1327"
+       id="dark_cyan_circle"
+       cx="123.28365"
+       cy="149.22499"
+       rx="8.4581995"
+       ry="8.4666662" />
+    <ellipse
+       style="fill:#ff00ff;stroke-width:0.1327"
+       id="dark_purple_circle"
+       cx="128.0414"
+       cy="143.93333"
+       rx="8.4581995"
+       ry="8.4666662" />
+    <ellipse
+       style="fill:#ffff00;stroke-width:0.1327"
+       id="dark_yellow_circle"
+       cx="119.5832"
+       cy="143.93333"
+       rx="8.4581995"
+       ry="8.4666662" />
+  </g>
+</svg>
