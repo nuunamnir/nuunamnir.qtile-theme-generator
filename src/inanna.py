@@ -1,282 +1,961 @@
-#!/usr/bin/env python
-'''
-TODO:
-~~~1. debug mode~~~
-~~~2. extract colors from image~~~
-3. check for legability rules and apply corrections
-~~~4. fix resizing of wallpaper~~~
-~~~5. add argparser~~~
-~~~6. update README.md~~~
-'''
-import os
-import re
-import io
 import logging
+
+logger = logging.getLogger(__name__)
+
+import os
+import collections
+import uuid
 import json
 import argparse
 
-import PIL.Image
-import PIL.ImageDraw
-import PIL.ImageFont
-
-import matplotlib
-import matplotlib.pyplot
+import platform
+from cpuinfo import get_cpu_info
 
 import numpy
-import scipy.cluster.vq
+import scipy.spatial
+import PIL.Image
+import PIL.ImageFilter
+import PIL.ImageDraw
+import PIL.ImageFont
+import sklearn.cluster
 import colorspacious
-
-theme = {
-    'colors': {
-        'background': '#ffffff',
-        'foreground': '#000000',
-        'foreground-accent': '#ff0000',
-        'foreground-accent-alt1': '#00ff00',
-        'foreground-accent-alt2': '#0000ff',
-        'foreground-accent-complementary': '#00ffff',
-        'background-accent': '#003333',
-    },
-    'fonts': {
-        'standard': 'FiraCode Nerd Font',
-    }
-}
-
-def generate_debug_preview(theme=None):
-    image = PIL.Image.new(size=(512, 512), mode='RGB', color=(34, 34, 34))
-    canvas = PIL.ImageDraw.Draw(image)
-    canvas.rounded_rectangle((8, 8, 512 - 8, 512 - 8), fill=theme['colors']['background'], radius=8)
-    font = matplotlib.font_manager.FontProperties(family=theme['fonts']['standard'], weight='bold')
-    font_file = matplotlib.font_manager.findfont(font)
-    standard_font = PIL.ImageFont.truetype(font_file, 12)
-    canvas.text((16, 16), 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\nsed diam nonumy eirmod tempor ...', fill=theme['colors']['foreground'], font=standard_font)
-    canvas.rounded_rectangle((12, 60, 512-12, 60 + 40), fill=theme['colors']['background-accent'], radius=8)
-    canvas.text((16, 64), '... invidunt ut labore et dolore magna aliquyam erat,\nsed diam voluptua.', fill=theme['colors']['foreground-accent'], font=standard_font)
-    
-    canvas.rounded_rectangle((12, 60 + 60, 512-12, 60 + 60 + 40), fill=theme['colors']['background-accent'], radius=8)
-    canvas.text((16, 64 + 60), 'At vero eos et accusam et justo duo dolores et ea rebum.', fill=theme['colors']['foreground-accent-alt1'], font=standard_font)
-    
-    canvas.rounded_rectangle((12, 60 + 120, 512-12, 60 + 120 + 40), fill=theme['colors']['background-accent'], radius=8)
-    canvas.text((16, 64 + 120), 'Stet clita kasd gubergren, no sea takimata sanctus est.', fill=theme['colors']['foreground-accent-alt2'], font=standard_font)
-    
-    canvas.rounded_rectangle((12, 60 + 180, 512-12, 60 + 180 + 40), fill=theme['colors']['background-accent'], radius=8)
-    canvas.text((16, 64 + 180), 'Ut enim ad minim veniam, quis nostrud exercitation ullamco\nlaboris nisi ut aliquid ex ea commodi consequat.', fill=theme['colors']['foreground-accent-complementary'], font=standard_font)
-    
-    canvas.rounded_rectangle((12, 60 + 240, 512-12, 60 + 240 + 40), fill=theme['colors']['foreground-accent-alt1'], radius=8)
-    canvas.text((16, 64 + 240), 'Nam liber tempor cum soluta nobis eleifend option congue nihil\nimperdiet doming id quod mazim placerat facer possim assum.', fill=theme['colors']['foreground-accent-complementary'], font=standard_font)
+from matplotlib import font_manager
 
 
-    canvas.rounded_rectangle((12, 460, 44, 492), fill=theme['colors']['background'], outline=theme['colors']['foreground'], radius=8)
-    canvas.text((12 + 4, 460 + 4, 44, 492), 'bg', fill=theme['colors']['foreground'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 34, 460, 44 + 34, 492), fill=theme['colors']['background-accent'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.text((12 + 34+ 4, 460+ 4, 44 + 34, 492), 'ba', fill=theme['colors']['foreground-accent'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 2 * 34, 460, 44 + 2 * 34, 492), fill=theme['colors']['foreground-accent-complementary'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.text((12 + 2 * 34+ 4, 460+ 4, 44 + 2 * 34, 492), 'bac', fill=theme['colors']['background-accent'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 3 * 34, 460, 44 + 3 * 34, 492), fill=theme['colors']['foreground-accent-alt2'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.text((12 + 3 * 34+ 4, 460+ 4, 44 + 3 * 34, 492), 'fa2', fill=theme['colors']['background-accent'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 4 * 34, 460, 44 + 4 * 34, 492), fill=theme['colors']['foreground-accent-alt1'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.text((12 + 4 * 34+ 4, 460+ 4, 44 + 4 * 34, 492), 'fa1', fill=theme['colors']['background-accent'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 5 * 34, 460, 44 + 5 * 34, 492), fill=theme['colors']['foreground-accent'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.text((12 + 5 * 34+ 4, 460+ 4, 44 + 5 * 34, 492), 'fa', fill=theme['colors']['background-accent'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 6 * 34, 460, 44 + 6 * 34, 492), fill=theme['colors']['foreground'], outline=theme['colors']['background'], radius=8)
-    canvas.text((12 + 6 * 34+ 4, 460+ 4, 44 + 6 * 34, 492), 'fg', fill=theme['colors']['background'], font=standard_font)
-
-    canvas.rounded_rectangle((12 + 34, 460 - 36, 44 + 34, 492 - 36), fill=theme['colors']['color1'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 2, 460 - 36, 44 + 34* 2, 492 - 36), fill=theme['colors']['color2'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 3, 460 - 36, 44 + 34* 3, 492 - 36), fill=theme['colors']['color3'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 4, 460 - 36, 44 + 34* 4, 492 - 36), fill=theme['colors']['color4'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 5, 460 - 36, 44 + 34* 5, 492 - 36), fill=theme['colors']['color5'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 6, 460 - 36, 44 + 34* 6, 492 - 36), fill=theme['colors']['color6'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 7, 460 - 36, 44 + 34* 7, 492 - 36), fill=theme['colors']['color7'], outline=theme['colors']['foreground-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 34 * 8, 460 - 36, 44 + 34* 8, 492 - 36), fill=theme['colors']['color8'], outline=theme['colors']['foreground-accent'], radius=8)
-
-    canvas.rounded_rectangle((12 + 5 * 34, 460 - 72, 44 + 5 * 34, 492 - 72), fill=theme['colors']['color9'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 6 * 34, 460 - 72, 44 + 6 * 34, 492 - 72), fill=theme['colors']['color10'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 7 * 34, 460 - 72, 44 + 7 * 34, 492 - 72), fill=theme['colors']['color11'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 8 * 34, 460 - 72, 44 + 8 * 34, 492 - 72), fill=theme['colors']['color12'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 9 * 34, 460 - 72, 44 + 9 * 34, 492 - 72), fill=theme['colors']['color13'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 10 * 34, 460 - 72, 44 + 10 * 34, 492 - 72), fill=theme['colors']['color14'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 11 * 34, 460 - 72, 44 + 11 * 34, 492 - 72), fill=theme['colors']['color15'], outline=theme['colors']['background-accent'], radius=8)
-    canvas.rounded_rectangle((12 + 12 * 34, 460 - 72, 44 + 12 * 34, 492 - 72), fill=theme['colors']['color16'], outline=theme['colors']['background-accent'], radius=8)
-    
-    image.save('debug.png')
-
-    matplotlib.pyplot.imshow(image)
-    matplotlib.pyplot.show()
+def load(image_file_path):
+    image = PIL.Image.open(image_file_path).convert("RGB")
+    return image
 
 
-def extract_colors_from_image(image_file_path, wallpaper_width, wallpaper_height, wallpaper_mode='stretched', light=False, debug=False):
-    image = PIL.Image.open(image_file_path).convert('RGB')
+def extract_colors(image, n_colors=256, min_n_colors=8):
+    image_array = numpy.array(image)
+    pixels = image_array.reshape(-1, image_array.shape[2])
+    model = sklearn.cluster.MiniBatchKMeans(
+        n_clusters=n_colors, n_init="auto", random_state=2106
+    )
+    model.fit(pixels)
 
-    image_resized = image.resize((128, 128), resample=PIL.Image.LANCZOS)
-    pixels = numpy.array(image_resized)
-    pixels = pixels.reshape(-1, pixels.shape[2]) / 255.
+    colors = list()
+    for cluster_center in model.cluster_centers_:
+        colors.append(colorspacious.cspace_convert(cluster_center, "sRGB255", "CIELCh"))
 
-    retries = 0
-    while retries < 128:
-        try:
-            colors, _ = scipy.cluster.vq.kmeans2(pixels, 16, missing='raise')
-            break
-        except scipy.cluster.vq.ClusterError:
-            retries += 1
+    unique_colors = set()
+    for color in colors:
+        unique_colors.add(tuple(color))
+
+    # TODO: handle images with few unique colors
+    if len(unique_colors) < min_n_colors:
+        logger.error(
+            f"found only {len(unique_colors)} unique colors; at least {n_colors} are required"
+        )
+        raise ValueError(
+            f"found only {len(unique_colors)} unique colors; at least {n_colors} are required"
+        )
+
+    return sorted(colors, key=lambda x: -x[0])
+
+
+def get_luminance(color):
+    color = [x / 255.0 for x in color]
+    for i in range(3):
+        color[i] = (
+            color[i] / 12.92
+            if color[i] <= 0.03928
+            else ((color[i] + 0.055) / 1.055) ** 2.4
+        )
+    return 0.2126 * color[0] + 0.7152 * color[1] + 0.0722 * color[2]
+
+
+def check_contrast(colors, min_contrast=7, n_colors=8):
+    valid_colors = collections.defaultdict(list)
+    contrasts = set()
+    contrasts.add(min_contrast)
+    i = 0
+    while len(valid_colors) < n_colors:
+        valid_colors = collections.defaultdict(list)
+        loop_min_contrast = sorted(contrasts, reverse=True)[i]
+        if loop_min_contrast < min_contrast:
+            logger.warning(
+                f"lowering minimum contrast to {loop_min_contrast}; this might lead to accessibility issues"
+            )
+        for color_target in colors:
+            for color_candidate in colors:
+                L_target = get_luminance(
+                    colorspacious.cspace_convert(color_target, "CIELCh", "sRGB255")
+                )
+                L_candidate = get_luminance(
+                    colorspacious.cspace_convert(color_candidate, "CIELCh", "sRGB255")
+                )
+                L1 = max(L_target, L_candidate)
+                L2 = min(L_target, L_candidate)
+                contrast = (L1 + 0.05) / (L2 + 0.05)
+                contrasts.add(contrast)
+                if contrast >= loop_min_contrast:
+                    valid_colors[tuple(color_target)].append(tuple(color_candidate))
+        i += 1
+        logger.debug(
+            f"found {len(valid_colors)} colors with a minimum contrast of {loop_min_contrast}"
+        )
+    return (
+        dict(sorted(valid_colors.items(), key=lambda x: -len(x[1]))),
+        loop_min_contrast,
+    )
+
+
+def select_colors(valid_colors, n_colors=8):
+    color_to_n = collections.defaultdict(int)
+    n_to_colors = collections.defaultdict(list)
+    for color in valid_colors:
+        color_to_n[color] = len(valid_colors[color])
+        n_to_colors[len(valid_colors[color])].append(color)
+
+    sorted_n = sorted(n_to_colors.keys(), key=lambda x: -x)
+
+    selected_colors = set()
+    candidates = set(valid_colors.keys())
+    for n in sorted_n:
+        if len(selected_colors) > n_colors:
             continue
-    if retries == 128:
-        logging.error(f'𝍐 | the provided pictures does not contain sufficient colors to create a theme')
-        raise ValueError
+        for color in n_to_colors[n]:
+            if len(selected_colors) > n_colors:
+                continue
+            if color in selected_colors:
+                continue
+            if color in candidates:
+                selected_colors.add(color)
+                candidates = set(valid_colors[color])
 
-    colors_srgb = [[f'#{r:x}{g:x}{b:x}', (r, g, b)] for r, g, b in numpy.round(colorspacious.cspace_convert(colors, 'sRGB1', 'sRGB255')).astype(int) if re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', f'#{r:x}{g:x}{b:x}')]
+    if len(selected_colors) < n_colors:
+        logger.warning(
+            f"could only select {len(selected_colors)} colors; at least {n_colors} are required: augmenting selected colors; this might lead to accessibility issues"
+        )
+        while len(selected_colors) < n_colors:
+            for color in valid_colors:
+                if color not in selected_colors:
+                    selected_colors.add(color)
+                    break
 
-    colors_lch = list()
-    for color_str, color_tup in colors_srgb:
-        colors_lch.append(colorspacious.cspace_convert(color_tup, 'sRGB255', 'CIELCh'))
+    return sorted(selected_colors, key=lambda x: -x[0])
 
 
-    if light:
-       colors_lch = sorted(colors_lch, key=lambda x: -x[0])
+def determine_base_color(image, selected_colors):
+    image_array = numpy.array(image)
+    pixels = image_array.reshape(-1, image_array.shape[2])
+
+    selected_colors_sRGB = colorspacious.cspace_convert(
+        selected_colors, "CIELCh", "sRGB255"
+    )
+    distances = scipy.spatial.distance.cdist(pixels, selected_colors_sRGB)
+    indices = numpy.argmin(distances, axis=1)
+    values, counts = numpy.unique(indices, return_counts=True)
+    base_color = values[numpy.argmax(counts)]
+    logger.debug(f"determined base color {selected_colors[base_color]}")
+    return base_color
+
+
+def determine_complementary_color(base_color_idx, selected_colors):
+    max_contrast = 0
+    complementary_color = None
+    L_target = get_luminance(
+        colorspacious.cspace_convert(
+            selected_colors[base_color_idx], "CIELCh", "sRGB255"
+        )
+    )
+    for i, color in enumerate(selected_colors):
+        L_candidate = get_luminance(
+            colorspacious.cspace_convert(color, "CIELCh", "sRGB255")
+        )
+        L1 = max(L_target, L_candidate)
+        L2 = min(L_target, L_candidate)
+        if (L1 + 0.05) / (L2 + 0.05) >= max_contrast:
+            max_contrast = (L1 + 0.05) / (L2 + 0.05)
+            complementary_color = i
+    logger.debug(
+        f"determined complementary color {selected_colors[complementary_color]} with contrast {max_contrast}"
+    )
+    return complementary_color
+
+
+def determine_accent_color(
+    base_color_idx, complementary_color_idx, select_colors, min_contrast=7
+):
+    candidates = set()
+    L_target = get_luminance(
+        colorspacious.cspace_convert(
+            selected_colors[base_color_idx], "CIELCh", "sRGB255"
+        )
+    )
+    for i, color in enumerate(selected_colors):
+        if i == base_color_idx or i == complementary_color_idx:
+            continue
+        L_candidate = get_luminance(
+            colorspacious.cspace_convert(color, "CIELCh", "sRGB255")
+        )
+        L1 = max(L_target, L_candidate)
+        L2 = min(L_target, L_candidate)
+        contrast = (L1 + 0.05) / (L2 + 0.05)
+        candidates.add(tuple([i, contrast, color]))
+
+    selected_candidate = sorted(candidates, key=lambda x: (-x[1], -x[2][1]))[0]
+    accent_color = selected_candidate[0]
+    if selected_candidate[1] < min_contrast:
+        logger.warning(
+            f"could not find an accent color with a contrast of at least {min_contrast}, actual contrast is {selected_candidate[1]}; using the color with the highest contrast {selected_candidate[2]}"
+        )
+    logger.debug(f"determined accent color {selected_colors[accent_color]}")
+
+    return accent_color
+
+
+def determine_base_color_variants(
+    base_color_idx, complementary_color_idx, selected_colors, min_contrast=7, steps=3
+):
+    color_base = list(selected_colors[base_color_idx])
+    start_L = color_base[0]
+    color_complementary = list(selected_colors[complementary_color_idx])
+    L_base = get_luminance(
+        colorspacious.cspace_convert(color_base, "CIELCh", "sRGB255")
+    )
+    L_complementary = get_luminance(
+        colorspacious.cspace_convert(color_complementary, "CIELCh", "sRGB255")
+    )
+    direction = 0
+    if L_base > L_complementary:
+        logger.info("light color theme")
+        direction = -1
     else:
-        colors_lch = sorted(colors_lch, key=lambda x: x[0])
+        logger.info("dark color theme")
+        direction = 1
 
-    colors_lch[-4][2] = (colors_lch[-3][2] + 90) % 360
-    colors_lch[-5] = colors_lch[-2]
-    colors_lch[-5][2] = (colors_lch[-2][2] + 180) % 360
-    if colors_lch[-3][0] - colors_lch[-5][0] < 50:
-        colors_lch[-5][0] = colors_lch[-3][0] + 50
-        logging.warning('𝍄 | contrast between foreground-accent-complementary and foreground-accent-alt1 too low - darkening')
-    if colors_lch[1][0] - colors_lch[-5][0] < 50:
-        colors_lch[-5][0] = colors_lch[1][0] + 50
-        logging.warning('𝍄 | contrast between foreground-accent-complementary and background-accent too low - darkening')
-    if abs(colors_lch[-3][2] - colors_lch[-5][2]) % 360 < 10:
-        colors_lch[-5][2] = abs(colors_lch[-3][2] + 10) % 360
-        logging.warning('𝍄 | hue between foreground-accent-complementary and background-accent too similar - rotating')
+    L1 = max(L_base, L_complementary)
+    L2 = min(L_base, L_complementary)
+    while (L1 + 0.05) / (L2 + 0.05) >= min_contrast:
+        color_base[0] += direction
+        L_base = get_luminance(
+            colorspacious.cspace_convert(color_base, "CIELCh", "sRGB255")
+        )
+        L1 = max(L_base, L_complementary)
+        L2 = min(L_base, L_complementary)
+    end_L = color_base[0]
 
-    palette = [None] * 16
-    for i in range(8):
-        palette[i] = colors_lch[1].copy()
-        palette[i + 8] = colors_lch[-2].copy()
+    variants = set()
+    variant = color_base.copy()
+    L1 = min(start_L, end_L)
+    L2 = max(start_L, end_L)
+    step_size = (L2 - L1) / (steps + 1)
+    for L in numpy.arange(L1, L2, step_size):
+        variant[0] = L
+        variants.add(tuple(variant))
 
-    palette[0][2] += 0
-    palette[1][2] += 45
-    palette[2][2] += 90
-    palette[3][2] += 135
-    palette[4][2] += 180
-    palette[5][2] += 215
-    palette[6][2] += 260
-    palette[7][2] += 305
-
-    palette[8][2] += 0
-    palette[9][2] += 45
-    palette[10][2] += 90
-    palette[11][2] += 135
-    palette[12][2] += 180
-    palette[13][2] += 215
-    palette[14][2] += 260
-    palette[15][2] += 305
-
-    palette_colors = numpy.round(colorspacious.cspace_convert(palette, 'CIELCh', 'sRGB255')).astype(int)
-    palette_srgb = [[f'#{min(abs(r), 255):{0}2x}{min(abs(g), 255):{0}2x}{min(abs(b), 255):{0}2x}', (min(abs(r), 255), min(abs(g), 255), min(abs(b), 255))] for r, g, b in palette_colors] # if re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', f'#{r:x}{g:x}{b:x}')]
-
-    colors = numpy.round(colorspacious.cspace_convert(colors_lch, 'CIELCh', 'sRGB255')).astype(int)
-    colors_srgb = [[f'#{min(abs(r), 255):{0}2x}{min(abs(g), 255):{0}2x}{min(abs(b), 255):{0}2x}', (min(abs(r), 255), min(abs(g), 255), min(abs(b), 255))] for r, g, b in colors] # if re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', f'#{r:x}{g:x}{b:x}')]
-
-    if debug:
-        matplotlib.pyplot.imshow(image)
-        matplotlib.pyplot.show()
-
-    wallpaper = PIL.Image.new(size=(wallpaper_width, wallpaper_height), mode='RGB', color=colors_srgb[0][0])    
-    wallpaper_image = image.copy()
-    wallpaper_image.thumbnail((wallpaper_width, wallpaper_height), PIL.Image.Resampling.LANCZOS)
-    wallpaper_image_width, wallpaper_image_height = wallpaper_image.size
-    offset = ((wallpaper_width - wallpaper_image_width) // 2, (wallpaper_height - wallpaper_image_height) // 2)
-    wallpaper.paste(wallpaper_image, offset)
-    if wallpaper_mode not in ['stretched', 'centered', 'tiled']:
-        logging.error(f'𝍐 | the provided wallpaper mode is not supported, only streteched, centered and tiled are supported')
-        raise ValueError
-
-    return wallpaper, {
-        'colors': {
-            'background': colors_srgb[0][0],
-            'foreground': colors_srgb[-1][0],
-            'foreground-accent': colors_srgb[-2][0],
-            'foreground-accent-alt1': colors_srgb[-3][0],
-            'foreground-accent-alt2': colors_srgb[-4][0],
-            'foreground-accent-complementary': colors_srgb[-5][0],
-            'background-accent': colors_srgb[1][0],
-            'color1': palette_srgb[0][0],
-            'color2': palette_srgb[1][0],
-            'color3': palette_srgb[2][0],
-            'color4': palette_srgb[3][0],
-            'color5': palette_srgb[4][0],
-            'color6': palette_srgb[5][0],
-            'color7': palette_srgb[6][0],
-            'color8': palette_srgb[7][0],
-            'color9': palette_srgb[8][0],
-            'color10': palette_srgb[9][0],
-            'color11': palette_srgb[10][0],
-            'color12': palette_srgb[11][0],
-            'color13': palette_srgb[12][0],
-            'color14': palette_srgb[13][0],
-            'color15': palette_srgb[14][0],
-            'color16': palette_srgb[15][0],
-        },
-        'fonts': {
-            'standard': 'FiraCode Nerd Font',
-        },
-        'wallpaper': wallpaper_mode,
-}
+    return direction, sorted(variants, key=lambda x: direction * x[0])
 
 
-def save(name, theme, wallpaper, output_dir_path=''):
+def determine_accent_color_variants(
+    accent_color_idx, selected_colors, direction, min_contrast=7
+):
+    L, C, h = selected_colors[accent_color_idx]
+    variants = list()
+    variants_toned = list()
+
+    for i in range(0, 6):
+        new_variant = (L, C, (h + i * 60) % 360)
+        variants.append(new_variant)
+        new_variant_sRGB = colorspacious.cspace_convert(
+            new_variant, "CIELCh", "sRGB255"
+        )
+        new_variant_toned = [L - direction, C, (h + i * 60) % 360]
+        new_variant_toned_sRGB = colorspacious.cspace_convert(
+            new_variant_toned, "CIELCh", "sRGB255"
+        )
+        L_base = get_luminance(new_variant_sRGB)
+        L_complementary = get_luminance(new_variant_toned_sRGB)
+        L1 = max(L_base, L_complementary)
+        L2 = min(L_base, L_complementary)
+        while (L1 + 0.05) / (L2 + 0.05) < min_contrast:
+            new_variant_toned[0] -= direction
+            new_variant_toned_sRGB = colorspacious.cspace_convert(
+                new_variant_toned, "CIELCh", "sRGB255"
+            )
+            L_complementary = get_luminance(new_variant_toned_sRGB)
+            L1 = max(L_base, L_complementary)
+            L2 = min(L_base, L_complementary)
+        variants_toned.append(tuple(new_variant_toned))
+
+    return (
+        sorted(variants, key=lambda x: x[2]),
+        sorted(variants_toned, key=lambda x: x[2]),
+    )
+
+
+def determine_square_color_variants(
+    accent_color_idx, complementary_color_idx, selected_colors
+):
+    L, C, h = selected_colors[accent_color_idx]
+    Lc, Cc, hc = selected_colors[complementary_color_idx]
+    variants = list()
+    for i in range(1, 4):
+        new_variant = ((L + Lc) / 2, (C + Cc) / 2, ((h + hc) // 2 + i * 90) % 360)
+        variants.append(new_variant)
+
+    return variants
+
+
+def determine_grey_color_variants(
+    base_color_idx, complementary_color_idx, selected_colors, direction, min_contrast=7
+):
+    base_color = selected_colors[base_color_idx]
+    complementary_color = selected_colors[complementary_color_idx]
+
+    blackwhite = list()
+    blackwhite_toned = list()
+    # black
+    if direction == 1:  # dark
+        L = base_color[0]
+        black = (base_color[0], 0, 0)
+    else:
+        L = complementary_color[0]
+        black = (complementary_color[0], 0, 0)
+    blackwhite.append(black)
+
+    black_sRGB = colorspacious.cspace_convert(black, "CIELCh", "sRGB255")
+    black_toned = [L - direction, 0, 0]
+    black_toned_sRGB = colorspacious.cspace_convert(black_toned, "CIELCh", "sRGB255")
+    L_base = get_luminance(black_sRGB)
+    L_complementary = get_luminance(black_toned_sRGB)
+    L1 = max(L_base, L_complementary)
+    L2 = min(L_base, L_complementary)
+    while (L1 + 0.05) / (L2 + 0.05) < min_contrast:
+        black_toned[0] -= direction
+        black_toned_sRGB = colorspacious.cspace_convert(
+            black_toned, "CIELCh", "sRGB255"
+        )
+        L_complementary = get_luminance(black_toned_sRGB)
+        L1 = max(L_base, L_complementary)
+        L2 = min(L_base, L_complementary)
+    blackwhite_toned.append(tuple(black_toned))
+
+    # white
+    if direction == 1:  # dark
+        L = complementary_color[0]
+        black = (complementary_color[0], 0, 0)
+    else:
+        L = base_color[0]
+        black = (base_color[0], 0, 0)
+    blackwhite.append(black)
+
+    black_sRGB = colorspacious.cspace_convert(black, "CIELCh", "sRGB255")
+    black_toned = [L - direction, 0, 0]
+    black_toned_sRGB = colorspacious.cspace_convert(black_toned, "CIELCh", "sRGB255")
+    L_base = get_luminance(black_sRGB)
+    L_complementary = get_luminance(black_toned_sRGB)
+    L1 = max(L_base, L_complementary)
+    L2 = min(L_base, L_complementary)
+    while (L1 + 0.05) / (L2 + 0.05) < min_contrast:
+        black_toned[0] -= direction
+        black_toned_sRGB = colorspacious.cspace_convert(
+            black_toned, "CIELCh", "sRGB255"
+        )
+        L_complementary = get_luminance(black_toned_sRGB)
+        L1 = max(L_base, L_complementary)
+        L2 = min(L_base, L_complementary)
+    blackwhite_toned.append(tuple(black_toned))
+
+    return (
+        sorted(blackwhite, key=lambda x: direction * x[0]),
+        sorted(blackwhite_toned, key=lambda x: direction * x[0]),
+    )
+
+
+def resize_image(image, width, height):
+    image_width, image_height = image.size
+    aspect_ratio = image_width / image_height
+
+    if width / height > aspect_ratio:
+        new_width = int(height * aspect_ratio)
+        new_height = height
+    else:
+        new_width = width
+        new_height = int(width / aspect_ratio)
+
+    resized_image = image.resize((new_width, new_height), PIL.Image.Resampling.LANCZOS)
+
+    left = (new_width - width) / 2
+    top = (new_height - height) / 2
+    right = (new_width + width) / 2
+    bottom = (new_height + height) / 2
+    cropped_image = resized_image.crop((left, top, right, bottom))
+
+    return cropped_image
+
+
+def generate_preview(
+    image,
+    theme,
+    colors,
+    selected_colors,
+    base_color_variants,
+    accent_color_variants,
+    square_color_variants,
+    grey_color_variants,
+    width=1920,
+    height=1080,
+):
+    def _draw_swatch(canvas, colors, offset_x, offset_y, swatch_width, swatch_height):
+        n_colors = len(colors)
+        canvas.rectangle(
+            [
+                (offset_x, offset_y),
+                (
+                    offset_x + ((swatch_width * n_colors) + (n_colors - 2) + 6),
+                    offset_y + (swatch_height + 6),
+                ),
+            ],
+            fill=(17, 17, 17),
+        )
+        for i, color in enumerate(colors):
+            x = offset_x + 3 + i * (swatch_width + 1)
+            y = offset_y + 3
+            canvas.rectangle(
+                [(x, y), (x + (swatch_width - 1), y + swatch_height)],
+                fill=tuple(
+                    map(
+                        int,
+                        numpy.round(
+                            colorspacious.cspace_convert(color, "CIELCh", "sRGB255")
+                        ),
+                    )
+                ),
+            )
+
+    def _draw_swatch_bipartite(
+        canvas, bipartite_colors, offset_x, offset_y, swatch_width, swatch_height
+    ):
+        colors, colors_tones = bipartite_colors
+        n_colors = len(colors)
+        canvas.rectangle(
+            [
+                (offset_x, offset_y),
+                (
+                    offset_x + ((swatch_width * n_colors) + (n_colors - 2) + 6),
+                    offset_y + (swatch_height + 6),
+                ),
+            ],
+            fill=(17, 17, 17),
+        )
+        for i, color in enumerate(colors):
+            x = offset_x + 3 + i * (swatch_width + 1)
+            y = offset_y + 3
+            canvas.rectangle(
+                [(x, y), (x + (swatch_width - 1), y + swatch_height)],
+                fill=tuple(
+                    map(
+                        int,
+                        numpy.round(
+                            colorspacious.cspace_convert(color, "CIELCh", "sRGB255")
+                        ),
+                    )
+                ),
+            )
+            canvas.rectangle(
+                [
+                    (x, y + swatch_height // 2),
+                    (x + (swatch_width - 1), y + swatch_height),
+                ],
+                fill=tuple(
+                    map(
+                        int,
+                        numpy.round(
+                            colorspacious.cspace_convert(
+                                colors_tones[i], "CIELCh", "sRGB255"
+                            )
+                        ),
+                    )
+                ),
+            )
+
+    preview_image = image.resize((width, height), PIL.Image.Resampling.LANCZOS)
+    preview_image = preview_image.filter(PIL.ImageFilter.GaussianBlur(32))
+
+    # TODO: calculate offsets based on preview image dimensions
+
+    canvas = PIL.ImageDraw.Draw(preview_image)
+    offset_x = (width - (4 * len(colors) + (len(colors) - 2) + 6)) / 2
+    _draw_swatch(canvas, colors, offset_x, 32, 4, 3)
+    _draw_swatch(canvas, selected_colors, offset_x, 128, 32, 63)
+    _draw_swatch(canvas, base_color_variants, offset_x, 256, 32, 63)
+    _draw_swatch_bipartite(canvas, accent_color_variants, offset_x, 256 + 128, 32, 63)
+    _draw_swatch(canvas, square_color_variants, offset_x, 512, 32, 63)
+    _draw_swatch_bipartite(canvas, grey_color_variants, offset_x, 512 + 128, 32, 63)
+
+    y = 64 + 32
+    x = width // 2
+    canvas.rectangle(
+        [(x, y + 31), (x + width // 3, y + height // 2.5)],
+        fill=theme["colors"]["background"],
+        outline=None,
+    )
+
+    font_file_standard = font_manager.findfont(theme["fonts"]["standard"])
+    font_standard = PIL.ImageFont.truetype(font_file_standard, 16)
+    font_file_console = font_manager.findfont(theme["fonts"]["standard"])
+    font_console = PIL.ImageFont.truetype(font_file_console, 16)
+
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48),
+        "Hello World!",
+        font=font_standard,
+        fill=theme["colors"]["foreground"],
+    )
+
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 3),
+        "OS:",
+        font=font_standard,
+        fill=theme["colors"]["highlight"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64, y + 48 + 16 + 3),
+        f"{platform.system()} {platform.release()}",
+        font=font_standard,
+        fill=theme["colors"]["foreground"],
+    )
+
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 6),
+        "CPU:",
+        font=font_standard,
+        fill=theme["colors"]["highlight"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64, y + 48 + 16 + 16 + 6),
+        f'{get_cpu_info()["brand_raw"]}',
+        font=font_standard,
+        fill=theme["colors"]["foreground"],
+    )
+
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 16 + 16 + 12),
+        f"{os.getlogin()}@{platform.node()} ~",
+        font=font_standard,
+        fill=theme["colors"]["background-02"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 16 + 16 + 16 + 15),
+        f"Sphinx of black quartz, judge my vow.",
+        font=font_standard,
+        fill=theme["colors"]["highlight-00"],
+    )
+
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21),
+        f"bright",
+        font=font_standard,
+        fill=theme["colors"]["bright-red"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21),
+        f"red",
+        font=font_standard,
+        fill=theme["colors"]["red"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 19),
+        f"bright",
+        font=font_standard,
+        fill=theme["colors"]["bright-green"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 19),
+        f"green",
+        font=font_standard,
+        fill=theme["colors"]["green"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38),
+        f"bright",
+        font=font_standard,
+        fill=theme["colors"]["bright-blue"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38),
+        f"blue",
+        font=font_standard,
+        fill=theme["colors"]["blue"],
+    )
+
+    canvas.text(
+        (x + 256 - 64 + 16 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21),
+        f"bright",
+        font=font_standard,
+        fill=theme["colors"]["bright-cyan"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21),
+        f"cyan",
+        font=font_standard,
+        fill=theme["colors"]["cyan"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 19),
+        f"bright",
+        font=font_standard,
+        fill=theme["colors"]["bright-magenta"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 19),
+        f"magenta",
+        font=font_standard,
+        fill=theme["colors"]["magenta"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38),
+        f"bright",
+        font=font_standard,
+        fill=theme["colors"]["bright-yellow"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38),
+        f"yellow",
+        font=font_standard,
+        fill=theme["colors"]["yellow"],
+    )
+
+    canvas.text(
+        (x + 256 - 64 + 16, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38 + 64),
+        f"░░░",
+        font=font_standard,
+        fill=theme["colors"]["bright-white"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 64, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38 + 64),
+        f"▒▒▒",
+        font=font_standard,
+        fill=theme["colors"]["white"],
+    )
+    canvas.text(
+        (x + 256 - 64 + 16 + 128, y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38 + 64),
+        f"░░░",
+        font=font_standard,
+        fill=theme["colors"]["bright-black"],
+    )
+    canvas.text(
+        (
+            x + 256 - 64 + 16 + 64 + 128,
+            y + 48 + 16 + 16 + 16 + 16 + 16 + 32 + 21 + 38 + 64,
+        ),
+        f"▒▒▒",
+        font=font_standard,
+        fill=theme["colors"]["black"],
+    )
+
+    max_size = (height // 4, height // 4)
+    image.thumbnail(max_size)
+
+    left = (image.width - min(image.width, image.height)) // 2
+    top = (image.height - min(image.width, image.height)) // 2
+    right = left + min(image.width, image.height)
+    bottom = top + min(image.width, image.height)
+
+    cropped_image = image.crop((left, top, right, bottom))
+
+    preview_image.paste(cropped_image, (width // 2 + 16, 64 + 64 + 16))
+
+    return preview_image
+
+
+def save(
+    wallpaper,
+    preview,
+    theme,
+    output_directory_path,
+    mode,
+    theme_name=None,
+    overwrite=False,
+):
+    if theme_name is None:
+        theme_name = uuid.uuid4().hex
+        logger.warning(f"no theme name provided, using {theme_name} instead")
+    theme_directory_path = os.path.expanduser(
+        os.path.join(output_directory_path, theme_name)
+    )
     try:
-        theme_dir_path = os.path.join(output_dir_path, name)
-        os.makedirs(theme_dir_path)
-        with io.open(os.path.join(theme_dir_path, 'theme.json'), 'w', encoding='utf-8') as output_handle:
-            json.dump(theme, output_handle)
-        wallpaper.save(os.path.join(theme_dir_path, 'wallpaper.png'))
+        os.makedirs(theme_directory_path)
     except FileExistsError:
-        logging.error(f'𝍐 | a theme of this name {name} already exists')
+        logger.warning(f"a theme of this name already exists")
+
+    try:
+        os.makedirs(os.path.join(theme_directory_path, f"{mode}_{theme_name}"))
+    except FileExistsError:
+        if not overwrite:
+            logger.error(
+                f"a theme of this name and mode already exists; to overwrite use the --overwrite flag"
+            )
+            return
+        logger.warning(f"a theme of this name and mode already exists; overwriting")
+
+    wallpaper_path = os.path.join(
+        theme_directory_path, f"{mode}_{theme_name}", "wallpaper.png"
+    )
+    wallpaper.save(wallpaper_path, "PNG")
+
+    preview_path = os.path.join(
+        theme_directory_path, f"{mode}_{theme_name}", "preview.png"
+    )
+    preview.save(preview_path, "PNG")
+
+    json.dump(
+        theme,
+        open(
+            os.path.join(theme_directory_path, f"{mode}_{theme_name}", "theme.json"),
+            "w",
+        ),
+        indent=4,
+    )
 
 
+def color_to_str(color):
+    color_sRGB = colorspacious.cspace_convert(color, "CIELCh", "sRGB255")
+    color_sRGB_i = numpy.round(color_sRGB).astype(int)
+    return f"#{min(max(0, color_sRGB_i[0]), 255):02x}{min(max(0, color_sRGB_i[1]), 255):02x}{min(max(0, color_sRGB_i[2]), 255):02x}"
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='{asctime} | {message}', style='{', datefmt='%Y-%m-%dT%H:%M:%S')
+
+def compile_theme(
+    wallpaper_mode,
+    fonts,
+    selected_colors,
+    base_color_idx,
+    accent_color_idx,
+    complementary_color_idx,
+    base_color_variants,
+    accent_color_variants,
+    square_color_variants,
+    grey_color_variants,
+):
+    theme = {
+        "colors": {
+            "background": color_to_str(selected_colors[base_color_idx]),
+            "foreground": color_to_str(selected_colors[complementary_color_idx]),
+            "highlight": color_to_str(selected_colors[accent_color_idx]),
+            "background-00": color_to_str(base_color_variants[1]),
+            "background-01": color_to_str(base_color_variants[2]),
+            "background-02": color_to_str(base_color_variants[3]),
+            "highlight-00": color_to_str(square_color_variants[0]),
+            "highlight-01": color_to_str(square_color_variants[1]),
+            "highlight-02": color_to_str(square_color_variants[2]),
+            "bright-red": color_to_str(accent_color_variants[0][0]),
+            "red": color_to_str(accent_color_variants[1][0]),
+            "bright-green": color_to_str(accent_color_variants[0][2]),
+            "green": color_to_str(accent_color_variants[1][2]),
+            "bright-blue": color_to_str(accent_color_variants[0][4]),
+            "blue": color_to_str(accent_color_variants[1][4]),
+            "bright-cyan": color_to_str(accent_color_variants[0][3]),
+            "cyan": color_to_str(accent_color_variants[1][3]),
+            "bright-magenta": color_to_str(accent_color_variants[0][5]),
+            "magenta": color_to_str(accent_color_variants[1][5]),
+            "bright-yellow": color_to_str(accent_color_variants[0][1]),
+            "yellow": color_to_str(accent_color_variants[1][1]),
+            "bright-white": color_to_str(grey_color_variants[0][1]),
+            "white": color_to_str(grey_color_variants[1][1]),
+            "bright-black": color_to_str(grey_color_variants[0][0]),
+            "black": color_to_str(grey_color_variants[1][0]),
+        },
+        "fonts": fonts,
+        "wallpaper": wallpaper_mode,
+    }
+
+    return theme
+
+
+if __name__ == "__main__":
+    log_handler = logging.StreamHandler()
+    log_formatter = logging.Formatter(
+        "%(asctime)s\t%(levelname)s\t%(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    log_handler.setFormatter(log_formatter)
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.ERROR)
 
     parser = argparse.ArgumentParser(
-        prog='inanna',
-        description='generates a theme for the qtile window manager',)
+        prog="inanna",
+        description="generates a theme for the nuunamnir environment",
+    )
 
-    parser.add_argument('-n', dest='name', type=str, help='the name of the theme, if not provided a UUID is generate', required=False, default=None)
-    parser.add_argument('-x', '--width', dest='width', type=int, help='target screen resolution width in pixel', required=False, default=3840)
-    parser.add_argument('-y', '--height', dest='height', type=int, help='target screen resolution height in pixel', required=False, default=2160)
-    parser.add_argument('-w', '--wallpaper', dest='wallpaper_mode', type=str, help='mode in which the image is used as wallpaper in this theme', choices=['stretched', 'centered', 'tiled'], required=False, default='stretched')
-    parser.add_argument('-o', '--output', dest='output', type=str, help='output directory path', required=False, default='')
-    parser.add_argument('-p', '--preview', dest='preview', help='shows a preview of the theme colors', required=False, default=False, action='store_true')
-    parser.add_argument('-l', '--light', dest='light', help='flips colors to create a light theme', required=False, default=False, action='store_true')
-    parser.add_argument('-d', '--debug', dest='debug', help='toggles between debug and production mode', required=False, default=False, action='store_true')
-    parser.add_argument('-fs', '--font-standard', type=str, dest='font_standard', help='standard font for the theme', required=False, default='FiraCode Nerd Font')
-    parser.add_argument('-fc', '--font-console', type=str, dest='font_console', help='console (monospace) font for the theme', required=False, default='Fira Code Regular')
-    parser.add_argument('-ff', '--font-features', type=str, dest='font_features', help='font features for the theme', required=False, default='FiraCode-Regular +cv16 +ss02')
-    
-    
-    parser.add_argument(dest='input', type=str, help='an input image based on which the theme is generated')
-   
+    parser.add_argument(
+        "-d",
+        "--debug",
+        dest="debug",
+        help="toggles between debug and production mode",
+        required=False,
+        default=False,
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        dest="output",
+        type=str,
+        help="output directory path",
+        required=False,
+        default=".",
+    )
+    parser.add_argument(
+        "-n",
+        "--name",
+        dest="name",
+        type=str,
+        help="the name of the theme, if not provided a UUID is generate",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "--overwrite",
+        dest="overwrite",
+        help="overwrite existing theme data",
+        required=False,
+        default=False,
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "-x",
+        "--width",
+        dest="width",
+        type=int,
+        help="target screen resolution width in pixel",
+        required=False,
+        default=3840,
+    )
+    parser.add_argument(
+        "-y",
+        "--height",
+        dest="height",
+        type=int,
+        help="target screen resolution height in pixel",
+        required=False,
+        default=2160,
+    )
+    parser.add_argument(
+        "-w",
+        "--wallpaper",
+        dest="wallpaper_mode",
+        type=str,
+        help="mode in which the image is used as wallpaper in this theme",
+        choices=["stretched", "centered", "tiled"],
+        required=False,
+        default="stretched",
+    )
+
+    parser.add_argument(
+        "-fs",
+        "--font-standard",
+        type=str,
+        dest="font_standard",
+        help="standard font for the theme",
+        required=False,
+        default="FiraMono Nerd Font Mono",
+    )
+    parser.add_argument(
+        "-fc",
+        "--font-console",
+        type=str,
+        dest="font_console",
+        help="console (monospace) font for the theme",
+        required=False,
+        default="FiraMono Nerd Font Mono",
+    )
+    parser.add_argument(
+        "-ff",
+        "--font-variants",
+        type=str,
+        dest="font_variants",
+        help="font variants for the theme",
+        required=False,
+        default="FiraMonoNFM-Regular +cv16 +ss02",
+    )
+
+    parser.add_argument(
+        dest="input",
+        type=str,
+        help="path to an image from which the theme is generated",
+    )
+
     args = parser.parse_args()
 
     if args.debug:
-        logger = logging.getLogger()
-        logger.setLevel(logging.ERROR)
-   
-    image_file_path = args.input
-    wallpaper, theme = extract_colors_from_image(image_file_path, args.width, args.height, wallpaper_mode=args.wallpaper_mode, light=args.light, debug=args.debug)
-    if args.debug or args.preview:
-        generate_debug_preview(theme)
-    theme['fonts'] = {
-        'standard': args.font_standard,
-        'console': args.font_console,
-        'features': args.font_features,
+        logger.setLevel(logging.DEBUG)
+        logger.debug(f"debug mode enabled")
+
+    image = load(args.input)
+    wallpaper = resize_image(image, args.width, args.height)
+
+    colors = extract_colors(wallpaper)
+    valid_colors, adjusted_min_contrast = check_contrast(colors)
+    selected_colors = select_colors(valid_colors)
+
+    base_color_idx = determine_base_color(wallpaper, selected_colors)
+    complementary_color_idx = determine_complementary_color(
+        base_color_idx, selected_colors
+    )
+    accent_color_idx = determine_accent_color(
+        base_color_idx, complementary_color_idx, selected_colors
+    )
+
+    direction, base_color_variants = determine_base_color_variants(
+        base_color_idx,
+        complementary_color_idx,
+        selected_colors,
+        min_contrast=adjusted_min_contrast,
+        steps=3,
+    )
+    accent_color_variants = determine_accent_color_variants(
+        accent_color_idx, selected_colors, direction, min_contrast=adjusted_min_contrast
+    )
+
+    square_color_variants = determine_square_color_variants(
+        accent_color_idx, complementary_color_idx, selected_colors
+    )
+
+    grey_color_variants = determine_grey_color_variants(
+        base_color_idx,
+        complementary_color_idx,
+        selected_colors,
+        direction,
+        min_contrast=7,
+    )
+
+    fonts = {
+        "standard": args.font_standard,
+        "console": args.font_console,
+        "variants": args.font_variants,
     }
-    # save(args.name, theme, wallpaper, args.output)
+
+    theme = compile_theme(
+        args.wallpaper_mode,
+        fonts,
+        selected_colors,
+        base_color_idx,
+        accent_color_idx,
+        complementary_color_idx,
+        base_color_variants,
+        accent_color_variants,
+        square_color_variants,
+        grey_color_variants,
+    )
+
+    preview = generate_preview(
+        wallpaper,
+        theme,
+        colors,
+        selected_colors,
+        base_color_variants,
+        accent_color_variants,
+        square_color_variants,
+        grey_color_variants,
+    )
+
+    if direction == -1:
+        mode = "light"
+    else:
+        mode = "dark"
+    save(wallpaper, preview, theme, args.output, mode, args.name, args.overwrite)
